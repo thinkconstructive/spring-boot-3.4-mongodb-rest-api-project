@@ -4,6 +4,7 @@ import com.thinkconstructive.book_store.dto.BookDto;
 import com.thinkconstructive.book_store.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,15 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @GetMapping("/welcome")
+    public ResponseEntity<String> welcomeMessage()
+    {
+        return new ResponseEntity<>("Welcome to the Book Store", HttpStatus.OK);
+    }
+
+
     @GetMapping("/{bookId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<BookDto> getBook(@PathVariable String bookId)
     {
         BookDto bookDto = bookService.getBook(bookId);
@@ -27,6 +36,7 @@ public class BookController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BookDto>> getAllBooks()
     {
        List<BookDto> bookDtoList = bookService.getAllBooks();
@@ -34,6 +44,7 @@ public class BookController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookDto> createBooks(@RequestBody BookDto bookDto)
     {
         BookDto bookDto1 = bookService.createBook(bookDto);
@@ -42,6 +53,7 @@ public class BookController {
 
 
     @PutMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookDto> updateBook(@RequestBody BookDto bookDto)
     {
         BookDto bookDto1 = bookService.updateBookName(bookDto);
@@ -49,6 +61,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{bookId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteBook(@PathVariable String bookId)
     {
         bookService.deleteBookByBookId(bookId);
